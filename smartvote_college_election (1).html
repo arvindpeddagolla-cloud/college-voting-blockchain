@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartVote | College Election System</title>
+  <style>
+    :root {
+      --navy:#14213d; --blue:#2563eb; --blue2:#1d4ed8; --bg:#f4f7fb;
+      --card:#fff; --text:#172033; --muted:#64748b; --line:#e5eaf2;
+      --green:#15803d; --red:#b91c1c; --shadow:0 8px 28px rgba(15,23,42,.07);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:5}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:21px;color:var(--navy)}
+    .brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:grid;place-items:center;font-size:20px}
+    .top-actions{display:flex;align-items:center;gap:12px}
+    .pill{background:#eff6ff;color:#1d4ed8;border-radius:30px;padding:8px 13px;font-size:12px;font-weight:700}
+    .layout{display:grid;grid-template-columns:245px 1fr;min-height:calc(100vh - 70px)}
+    aside{background:var(--navy);color:#dbeafe;padding:25px 15px}
+    .nav-label{font-size:11px;text-transform:uppercase;letter-spacing:1.3px;color:#91a4c5;padding:12px 13px}
+    .nav-btn{width:100%;border:0;background:transparent;color:#dbeafe;text-align:left;padding:12px 13px;border-radius:10px;margin:3px 0;font-weight:600;display:flex;gap:12px;align-items:center}
+    .nav-btn:hover,.nav-btn.active{background:#263b61;color:#fff}
+    .nav-btn span:first-child{width:20px;text-align:center}
+    main{padding:32px 4%;max-width:1400px;width:100%;margin:auto}
+    .page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:25px}
+    h1{font-size:27px;margin:0 0 7px;color:var(--navy)}
+    h2{font-size:18px;margin:0 0 17px}
+    h3{font-size:15px;margin:0 0 8px}
+    p{color:var(--muted);line-height:1.55}
+    .sub{margin:0;font-size:14px}
+    .btn{border:0;border-radius:9px;padding:11px 16px;font-weight:700;background:var(--blue);color:white;box-shadow:0 3px 8px #2563eb22}
+    .btn:hover{background:var(--blue2)}
+    .btn.secondary{background:#eaf0fb;color:#1e40af;box-shadow:none}
+    .btn.outline{background:#fff;color:var(--blue);border:1px solid #cbd8f3;box-shadow:none}
+    .btn.danger{background:#fee2e2;color:#991b1b;box-shadow:none}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .grid{display:grid;gap:18px}
+    .stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:22px}
+    .two{grid-template-columns:1.3fr .7fr}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:21px;box-shadow:var(--shadow)}
+    .stat{display:flex;justify-content:space-between;align-items:center}
+    .stat .num{font-size:27px;font-weight:800;color:var(--navy);margin-top:8px}
+    .stat-icon{width:42px;height:42px;border-radius:12px;background:#eff6ff;color:var(--blue);display:grid;place-items:center;font-size:20px}
+    .muted{color:var(--muted);font-size:13px}
+    .candidate-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .candidate{border:1px solid var(--line);border-radius:13px;padding:17px;background:#fff}
+    .avatar{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#dbeafe,#ede9fe);display:grid;place-items:center;font-size:22px;color:#1e40af;font-weight:800;margin-bottom:13px}
+    .candidate .dept{font-size:13px;color:var(--muted);margin:5px 0 14px}
+    .candidate .manifesto{font-size:13px;min-height:40px;margin:0 0 12px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:11px;font-weight:800;background:#dcfce7;color:#166534}
+    .badge.gray{background:#eef2f7;color:#475569}
+    .badge.red{background:#fee2e2;color:#991b1b}
+    .notice{padding:13px 15px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:13px;margin-bottom:18px}
+    .notice.warn{background:#fff7ed;color:#9a3412}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px}
+    input,select,textarea{width:100%;border:1px solid #d8e0ec;border-radius:9px;padding:11px 12px;background:#fff;outline:none;color:var(--text)}
+    input:focus,select:focus,textarea:focus{border-color:#6092f5;box-shadow:0 0 0 3px #dbeafe}
+    .field{margin-bottom:13px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}
+    th{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+    .bar{height:9px;background:#eaf0f8;border-radius:20px;overflow:hidden;margin-top:8px}
+    .bar>i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:20px}
+    .result-item{margin:15px 0}
+    .result-item .row{font-size:13px}
+    .empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed #cbd5e1;border-radius:12px}
+    .hidden{display:none!important}
+    .modal-backdrop{position:fixed;inset:0;background:#0f172a99;display:grid;place-items:center;padding:18px;z-index:20}
+    .modal{background:#fff;border-radius:16px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px #0003}
+    .modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+    .toast{position:fixed;right:20px;bottom:20px;background:#14213d;color:#fff;padding:13px 17px;border-radius:10px;box-shadow:var(--shadow);z-index:30;max-width:340px;font-size:13px}
+    footer{text-align:center;color:#94a3b8;font-size:12px;padding:25px}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}aside{padding:10px;display:flex;overflow:auto;gap:5px}.nav-label{display:none}.nav-btn{white-space:nowrap;width:auto}.stats{grid-template-columns:repeat(2,1fr)}.candidate-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.topbar{padding:0 15px}.layout{display:block}aside{position:sticky;top:70px;z-index:4}.nav-btn{font-size:12px;padding:10px}.nav-btn span:first-child{display:none}main{padding:23px 15px}.stats,.two,.candidate-grid,.form-grid{grid-template-columns:1fr}.page-head{display:block}.page-head .btn{margin-top:12px}.top-actions .pill{display:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">✓</div> SmartVote</div>
+    <div class="top-actions"><span class="pill">COLLEGE ELECTION DEMO</span><button class="btn outline" onclick="showPage('profile')">My Profile</button></div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <div class="nav-label">Main menu</div>
+      <button class="nav-btn active" data-page="dashboard" onclick="showPage('dashboard')"><span>▦</span>Dashboard</button>
+      <button class="nav-btn" data-page="candidates" onclick="showPage('candidates')"><span>♙</span>Candidates</button>
+      <button class="nav-btn" data-page="vote" onclick="showPage('vote')"><span>☑</span>Cast Vote</button>
+      <button class="nav-btn" data-page="results" onclick="showPage('results')"><span>▥</span>Results</button>
+      <div class="nav-label">Administration</div>
+      <button class="nav-btn" data-page="admin" onclick="showPage('admin')"><span>⚙</span>Admin Panel</button>
+      <button class="nav-btn" data-page="transparency" onclick="showPage('transparency')"><span>▤</span>Transparency</button>
+      <div class="nav-label">Account</div>
+      <button class="nav-btn" data-page="profile" onclick="showPage('profile')"><span>◎</span>Profile / Login</button>
+    </aside>
+
+    <main>
+      <section id="dashboard" class="page">
+        <div class="page-head"><div><h1>Welcome to SmartVote</h1><p class="sub">A simple and transparent college election experience.</p></div><span id="statusBadge" class="badge gray">Election not started</span></div>
+        <div class="notice warn">Demo mode: this single-file prototype stores sample data in this browser only. It does not submit votes to a blockchain or verify student identities.</div>
+        <div class="grid stats">
+          <div class="card stat"><div><div class="muted">Total candidates</div><div class="num" id="statCandidates">3</div></div><div class="stat-icon">♙</div></div>
+          <div class="card stat"><div><div class="muted">Registered voters</div><div class="num" id="statVoters">25</div></div><div class="stat-icon">♧</div></div>
+          <div class="card stat"><div><div class="muted">Votes cast (demo)</div><div class="num" id="statVotes">0</div></div><div class="stat-icon">☑</div></div>
+          <div class="card stat"><div><div class="muted">Participation</div><div class="num" id="statParticipation">0%</div></div><div class="stat-icon">▥</div></div>
+        </div>
+        <div class="grid two">
+          <div class="card"><div class="row"><h2>Featured candidates</h2><button class="btn secondary" onclick="showPage('candidates')">View all</button></div><div id="dashboardCandidates" class="grid candidate-grid"></div></div>
+          <div class="card"><h2>Election information</h2><p><b>Election:</b> Student Council Election 2026</p><p><b>Voting method:</b> One vote per demo student ID</p><p><b>Current status:</b> <span id="dashboardStatus">Not started</span></p><p><b>Transparency:</b> Demo records are visible in the results page.</p><button class="btn" onclick="showPage('vote')">Go to voting</button></div>
+        </div>
+      </section>
+
+      <section id="candidates" class="page hidden">
+        <div class="page-head"><div><h1>Election Candidates</h1><p class="sub">Review the candidates before making your choice.</p></div></div>
+        <div id="candidateList" class="grid candidate-grid"></div>
+      </section>
+
+      <section id="vote" class="page hidden">
+        <div class="page-head"><div><h1>Cast Your Vote</h1><p class="sub">Choose one candidate. Your demo selection cannot be changed.</p></div></div>
+        <div id="voteNotice" class="notice">Please sign in with your demo student ID on the Profile page to vote.</div>
+        <div id="voteList" class="grid candidate-grid"></div>
+      </section>
+
+      <section id="results" class="page hidden">
+        <div class="page-head"><div><h1>Election Results</h1><p class="sub">Candidate-wise vote totals for this browser demo.</p></div><button class="btn outline" onclick="render()">Refresh results</button></div>
+        <div class="grid two">
+          <div class="card"><h2>Vote distribution</h2><div id="resultBars"></div></div>
+          <div class="card"><h2>Summary</h2><div class="stat"><span class="muted">Total votes</span><b id="resultTotal">0</b></div><hr style="border:0;border-top:1px solid var(--line);margin:15px 0"><div class="stat"><span class="muted">Leading candidate</span><b id="leader">Not available</b></div><p class="muted" style="margin-top:15px">Results shown here are demonstration data, not independently verified election results.</p></div>
+        </div>
+      </section>
+
+      <section id="admin" class="page hidden">
+        <div class="page-head"><div><h1>Admin Panel</h1><p class="sub">Manage demo candidates and election status.</p></div><span class="badge gray">Prototype controls</span></div>
+        <div class="notice warn">For this demo, admin controls are not password-protected. Do not use this prototype to run a real election.</div>
+        <div class="grid two">
+          <div class="card"><h2>Add a candidate</h2>
+            <form id="candidateForm">
+              <div class="field"><label for="newName">Candidate name</label><input id="newName" required maxlength="50" placeholder="e.g. Rahul Kumar"></div>
+              <div class="field"><label for="newDept">Department</label><input id="newDept" required maxlength="40" placeholder="e.g. Computer Science"></div>
+              <div class="field"><label for="newManifesto">Short manifesto</label><textarea id="newManifesto" rows="3" maxlength="160" placeholder="What will the candidate work on?"></textarea></div>
+              <button class="btn" type="submit">Add candidate</button>
+            </form>
+          </div>
+          <div class="card"><h2>Election controls</h2><p class="muted">Start the demo election to enable voting. End it to stop further demo votes.</p><div class="row" style="margin:18px 0"><span>Current status</span><b id="adminStatus">Not started</b></div><button class="btn" id="startBtn" onclick="startElection()">Start election</button> <button class="btn danger" id="endBtn" onclick="endElection()">End election</button><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><button class="btn outline" onclick="resetDemo()">Reset demo data</button></div>
+        </div>
+        <div class="card" style="margin-top:18px"><h2>Manage candidates</h2><div id="adminCandidates"></div></div>
+      </section>
+
+      <section id="transparency" class="page hidden">
+        <div class="page-head"><div><h1>Transparency & Verification</h1><p class="sub">Understand how a future blockchain integration will be presented.</p></div></div>
+        <div class="notice warn">Blockchain is not connected in this HTML-only version. The fields below are explanatory placeholders, not real transaction data.</div>
+        <div class="grid two">
+          <div class="card"><h2>System information</h2><p><b>Application:</b> SmartVote College Election</p><p><b>Storage:</b> Browser localStorage (demo only)</p><p><b>Blockchain network:</b> Not connected</p><p><b>Smart contract:</b> Not configured</p><p><b>Transaction verification:</b> Unavailable in demo mode</p></div>
+          <div class="card"><h2>Future blockchain workflow</h2><p>1. A backend verifies the student's college eligibility.</p><p>2. The backend securely submits a vote to an audited smart contract.</p><p>3. The contract enforces election rules.</p><p>4. Publicly verifiable totals are displayed without exposing voter identity.</p></div>
+        </div>
+      </section>
+
+      <section id="profile" class="page hidden">
+        <div class="page-head"><div><h1>Student Profile / Demo Login</h1><p class="sub">Enter a sample student ID to try the prototype.</p></div></div>
+        <div class="card" style="max-width:600px">
+          <div class="notice">This is a local demonstration login, not real college authentication.</div>
+          <form id="loginForm">
+            <div class="field"><label for="studentName">Student name</label><input id="studentName" placeholder="Your name" required maxlength="60"></div>
+            <div class="field"><label for="studentId">Student ID</label><input id="studentId" placeholder="e.g. STU2026001" required maxlength="30"></div>
+            <div class="field"><label for="studentDept">Department</label><select id="studentDept"><option>CSE</option><option>ECE</option><option>IT</option><option>EEE</option><option>Mechanical</option><option>Civil</option><option>Other</option></select></div>
+            <button class="btn" type="submit">Sign in to demo</button>
+            <button class="btn secondary" type="button" onclick="logout()">Sign out</button>
+          </form>
+          <div id="profileInfo" class="notice hidden" style="margin-top:18px"></div>
+        </div>
+      </section>
+      <footer>© 2026 SmartVote · College Election System · Educational prototype</footer>
+    </main>
+  </div>
+
+  <div id="modal" class="modal-backdrop hidden">
+    <div class="modal"><h2>Confirm your vote</h2><p id="confirmText">Are you sure you want to vote for this candidate?</p><div class="modal-actions"><button class="btn secondary" onclick="closeModal()">Cancel</button><button class="btn" id="confirmVoteBtn">Confirm vote</button></div></div>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const defaultCandidates = [
+      {id:1,name:"Rahul Kumar",dept:"Computer Science (CSE)",manifesto:"Improve lab facilities and organize coding events.",votes:0},
+      {id:2,name:"Arjun Reddy",dept:"Electronics (ECE)",manifesto:"Build stronger student clubs and technical workshops.",votes:0},
+      {id:3,name:"Priya Sharma",dept:"Information Technology (IT)",manifesto:"Support student activities and improve campus communication.",votes:0}
+    ];
+    const KEY = "smartvote_demo_v1";
+    let data = loadData();
+    let pendingCandidate = null;
+    function loadData(){
+      try { const saved=localStorage.getItem(KEY); if(saved) return JSON.parse(saved); } catch(e){}
+      return {candidates:defaultCandidates,electionOpen:false,electionEnded:false,voters:[],votes:{},user:null};
+    }
+    function save(){localStorage.setItem(KEY,JSON.stringify(data));}
+    function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+    function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.remove("hidden");setTimeout(()=>t.classList.add("hidden"),3000);}
+    function showPage(id){
+      document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+      render();
+    }
+    function totalVotes(){return Object.keys(data.votes).length;}
+    function hasVoted(){return !!(data.user && data.votes[data.user.id]);}
+    function candidateCard(c,canVote=false){
+      const voted=hasVoted(),disabled=!data.electionOpen||!data.user||voted;
+      return `<article class="candidate"><div class="avatar">${escapeHTML(c.name.trim().charAt(0).toUpperCase())}</div><h3>${escapeHTML(c.name)}</h3><div class="dept">${escapeHTML(c.dept)}</div><p class="manifesto">${escapeHTML(c.manifesto||"No manifesto provided.")}</p>${canVote?`<button class="btn" ${disabled?"disabled":""} onclick="askVote(${c.id})">${voted?"Already voted":!data.user?"Sign in to vote":!data.electionOpen?"Voting unavailable":"Select candidate"}</button>`:`<span class="badge gray">Candidate</span>`}</article>`;
+    }
+    function render(){
+      const count=data.candidates.length, voters=data.voters.length, votes=totalVotes();
+      document.getElementById("statCandidates").textContent=count;
+      document.getElementById("statVoters").textContent=voters;
+      document.getElementById("statVotes").textContent=votes;
+      document.getElementById("statParticipation").textContent=(voters?Math.round(votes/voters*100):0)+"%";
+      const status=data.electionEnded?"Election ended":data.electionOpen?"Election in progress":"Election not started";
+      document.getElementById("statusBadge").textContent=status;
+      document.getElementById("dashboardStatus").textContent=status;
+      document.getElementById("adminStatus").textContent=status;
+      document.getElementById("startBtn").disabled=data.electionOpen||data.electionEnded||!count;
+      document.getElementById("endBtn").disabled=!data.electionOpen;
+      document.getElementById("dashboardCandidates").innerHTML=data.candidates.slice(0,3).map(c=>candidateCard(c)).join("");
+      document.getElementById("candidateList").innerHTML=data.candidates.map(c=>candidateCard(c)).join("")||'<div class="empty">No candidates have been added.</div>';
+      document.getElementById("voteList").innerHTML=data.candidates.map(c=>candidateCard(c,true)).join("")||'<div class="empty">No candidates available.</div>';
+      document.getElementById("voteNotice").textContent=!data.user?"Please sign in on the Profile page to vote.":hasVoted()?"Your demo vote has been recorded. You cannot vote again with this student ID.":data.electionOpen?"You are signed in as "+data.user.name+". Select one candidate below.":"Voting is not currently open.";
+      document.getElementById("adminCandidates").innerHTML=data.candidates.length?`<table><thead><tr><th>Candidate</th><th>Department</th><th>Demo votes</th></tr></thead><tbody>${data.candidates.map(c=>`<tr><td>${escapeHTML(c.name)}</td><td>${escapeHTML(c.dept)}</td><td>${Object.values(data.votes).filter(v=>v===c.id).length}</td></tr>`).join("")}</tbody></table>`:'<div class="empty">No candidates yet.</div>';
+      const totals=data.candidates.map(c=>({...c,total:Object.values(data.votes).filter(v=>v===c.id).length}));
+      const max=Math.max(1,...totals.map(c=>c.total));
+      document.getElementById("resultBars").innerHTML=totals.map(c=>`<div class="result-item"><div class="row"><b>${escapeHTML(c.name)}</b><span>${c.total} vote(s)</span></div><div class="bar"><i style="width:${c.total/max*100}%"></i></div></div>`).join("")||'<div class="empty">No candidates available.</div>';
+      document.getElementById("resultTotal").textContent=votes;
+      const leader=[...totals].sort((a,b)=>b.total-a.total)[0];
+      document.getElementById("leader").textContent=leader&&votes?leader.name:"Not available";
+      const profile=document.getElementById("profileInfo");
+      if(data.user){profile.classList.remove("hidden");profile.textContent=`Signed in as ${data.user.name} · ${data.user.id} · ${data.user.dept}`;}
+      else profile.classList.add("hidden");
+      save();
+    }
+    function askVote(id){
+      if(!data.user){toast("Please sign in first.");showPage("profile");return;}
+      if(!data.electionOpen||hasVoted())return;
+      pendingCandidate=id;
+      const c=data.candidates.find(x=>x.id===id);
+      document.getElementById("confirmText").textContent=`You are selecting ${c.name}. A demo vote will be recorded for student ID ${data.user.id}.`;
+      document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("confirmVoteBtn").onclick=confirmVote;
+    }
+    function closeModal(){document.getElementById("modal").classList.add("hidden");pendingCandidate=null;}
+    function confirmVote(){
+      if(!pendingCandidate||!data.user||!data.electionOpen||hasVoted())return;
+      data.votes[data.user.id]=pendingCandidate;save();closeModal();render();toast("Demo vote recorded in this browser.");
+    }
+    function startElection(){if(!data.candidates.length)return;data.electionOpen=true;data.electionEnded=false;save();render();toast("Demo election started.");}
+    function endElection(){data.electionOpen=false;data.electionEnded=true;save();render();toast("Demo election ended.");}
+    function resetDemo(){if(!confirm("Reset all demo candidates, voters, and votes in this browser?"))return;data={candidates:defaultCandidates.map(c=>({...c})),electionOpen:false,electionEnded:false,voters:[],votes:{},user:null};save();render();toast("Demo data reset.");}
+    function logout(){data.user=null;save();render();toast("Signed out.");}
+    document.getElementById("loginForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      const name=document.getElementById("studentName").value.trim();
+      const id=document.getElementById("studentId").value.trim();
+      const dept=document.getElementById("studentDept").value;
+      if(!name||!id)return;
+      data.user={name,id,dept};
+      if(!data.voters.includes(id))data.voters.push(id);
+      save();render();toast("Demo sign-in successful.");showPage("dashboard");
+    });
+    document.getElementById("candidateForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      if(data.electionOpen||data.electionEnded){toast("Candidates cannot be added after the election starts.");return;}
+      const name=document.getElementById("newName").value.trim();
+      const dept=document.getElementById("newDept").value.trim();
+      const manifesto=document.getElementById("newManifesto").value.trim();
+      if(!name||!dept)return;
+      data.candidates.push({id:Date.now(),name,dept,manifesto,votes:0});
+      e.target.reset();save();render();toast("Candidate added.");
+    });
+    render();
+  </script>
+</body>
+</html>
